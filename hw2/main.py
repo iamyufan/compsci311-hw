@@ -1,128 +1,161 @@
 import asyncio
-import socket
 
 HOST = 'vcm-32603.vm.duke.edu'
 PORT = 51300
 ID = 'yz605'
 
-connected_ports = []
-secondary_connections = {}
-listen_sockets = {}
+SEC_PORTS = []
+SEC_CONN = {}
+LISTEN_PORTS = []
+LISTEN_SERVERS = {}
 
-async def handle_primary_connection(reader, writer):
-    print("Connected to server on primary connection")
+
+def write_id_message(writer):
+    '''
+    Write the ID message to the server
+    '''
     writer.write(f"id {ID}\n".encode('ascii'))
-    await writer.drain()
-
-    data = await reader.readline()
-    port = int(data.decode('ascii').strip().split()[1])
-
-    try:
-        secondary_task = asyncio.create_task(handle_secondary_connection(port, connected_ports))
-        status_task = asyncio.create_task(handle_status_messages(reader))
-
-        await asyncio.wait([secondary_task, status_task], return_when=asyncio.FIRST_COMPLETED)
-
-        for task in [secondary_task, status_task]:
-            if not task.done():
-                task.cancel()
-    except asyncio.CancelledError:
-        writer.close()
-        await writer.wait_closed()
-
-    print(f"The connected ports are: {connected_ports}")
 
 
-async def handle_secondary_connection(port, connected_ports):
-    while True:
-        if port in connected_ports:
-            reader, writer = secondary_connections[port]
-        else:
-            reader, writer = await asyncio.open_connection(HOST, port)
-            connected_ports.append(port)
-            secondary_connections[port] = reader, writer
-
-        print(f"Connected to server on secondary connection to port {port}")
-        writer.write(f"id {ID}\n".encode('ascii'))
-        await writer.drain()
-
-        data = await reader.readline()
-        if not data:
-            writer.close()
-            await writer.wait_closed()
-            break
-
-        message = data.decode('ascii').strip()
-        print(f"Received message: {message}")
-        if message.startswith('query'):
-            new_port = int(message.split()[1])
-            port = new_port
-        elif message.startswith('listen'):
-            listen_port = int(message.split()[1])
-            listen_task = asyncio.create_task(handle_listen_message(listen_port))
-        else:
-            print(f"Unknown message received: {message}")
-
-
-async def handle_listen_message(port):
-    print(f"Listening for connections on port {port}")
-    server = await asyncio.start_server(handle_client, port=port)
-    async with server:
-        await server.serve_forever()
-
-
-async def handle_client(reader, writer):
-    print("Connection established")
-    writer.write(f"id {ID}\n".encode('ascii'))
-    await writer.drain()
-
+async def handle_listen_connection(reader, writer):
+    '''
+    Handle the listen connection from the server
+    '''
+    print(f"> Listening on port {writer.get_extra_info('sockname')[1]}: server established")
+    # Handle the received message
     while True:
         data = await reader.readline()
         if not data:
             break
+
         message = data.decode('ascii').strip()
-        print(f"Received message: {message}")
-        # Handle the message here
-    writer.close()
-    await writer.wait_closed()
-    print("Connection closed")
-
-
-async def handle_query_message(reader, writer):
-    print(f"Received connection on listen port {writer.get_extra_info('peername')[1]}")
-    writer.write(f"id {ID}\n".encode('ascii'))
-    await writer.drain()
-
-    while True:
-        data = await reader.readline()
-        if not data:
-            break
-        message = data.decode('ascii').strip()
-        if message.startswith('query'):
-            port = int(message.split()[1])
-            if port in connected_ports:
-                reader, writer = secondary_connections[port]
-                writer.write(f"id {ID}\n".encode('ascii'))
-                await writer.drain()
+        print(f"> Listening on port {writer.get_extra_info('sockname')[1]}: received message {message}")
+        query_port = int(message.split()[1])
+        asyncio.create_task(handle_secondary_connection(query_port))
 
 
 async def handle_status_messages(reader):
+    '''
+    Handle the status message from the server
+        - SUCCESS = "success"
+        - ID_READ_TIMEOUT = "timeout while reading identification message"
+        - ID_PARSE_ERROR = "failed to parse identification message"
+        - ID_WITHOUT_SESSION = "secondary connection but no active session"
+        - CONCURRENT_SESSION = "primary connection but existing active session"
+        - ID_FROM_DIFF_HOST = "identification from different remote host"
+        - DUPLICATE_SECONDARY = "duplicate secondary connection"
+        - UNEXPECTED_ID = "unexpected id message"
+        - INVALID_ID = "invalid identifier in id message"
+        - CONNECTION_FAILURE = "failure to connect to a remote port"
+    '''
     while True:
+        # Wait for a status message from the server
         data = await reader.readline()
         if not data:
             break
+            
+        # Print the message and cancel all other coroutines
         message = data.decode('ascii').strip()
         print(f"Received status message: {message}")
         for task in asyncio.all_tasks():
             task.cancel()
+        for s in LISTEN_SERVERS.values():
+            s.close()
+
+
+async def create_server(port):
+    '''
+    Create a new server for the listen message
+    '''
+    server = await asyncio.start_server(handle_listen_connection, port=port)
+    LISTEN_SERVERS[port] = server
+    async with server:
+        await server.serve_forever()
+
+
+async def handle_listen_server(listen_port):
+    '''
+    Handle the listen message from the server
+    '''
+    LISTEN_PORTS.append(listen_port)
+    asyncio.create_task(create_server(listen_port))
+
+
+async def handle_secondary_connection(port):
+    '''
+    Handle the secondary connection to the server
+    - Receive the query message and open a new connection
+    - Receive the listen message and open a new server
+    '''
+    # If the port is already visited, simply write the ID message
+    if port in SEC_PORTS:
+        reader, writer = SEC_CONN[port]
+        print(f"Connected to server on secondary connection to port {port} (visited)")
+        # Write the ID message
+        write_id_message(writer)
+    # If the port is never visited, open a new connection and handle the message
+    else:
+        reader, writer = await asyncio.open_connection(HOST, port)
+        SEC_PORTS.append(port)
+        SEC_CONN[port] = reader, writer
+        print(f"Connected to server on secondary connection to port {port}")
+
+        # Write the ID message
+        write_id_message(writer)
+
+        # Handle the received message
+        while True:
+            # Wait for a message from the server
+            data = await reader.readline()
+            if not data:
+                break
+
+            msg = data.decode('ascii').strip()
+            msg_type = msg.split()[0]
+            msg_port = int(msg.split()[1])
+
+            # Handle query message
+            if msg_type == "query":
+                asyncio.create_task(handle_secondary_connection(msg_port))
+            
+            # Handle listen message
+            elif msg_type == "listen":
+                asyncio.create_task(handle_listen_server(msg_port)) 
+
+
+async def handle_primary_connection():
+    '''
+    Handle the primary connection to the server
+        - Receive the first port for secondary connection
+        - Receive the status message and close all the connection
+    '''
+    # Open connection to the primary port
+    reader, writer = await asyncio.open_connection(HOST, PORT)
+    print("Connected to server on primary connection")
+
+    # Write the ID message
+    write_id_message(writer)
+
+    # Receive the first port for secondary connection
+    data = await reader.readline()
+    new_port = int(data.decode('ascii').strip().split()[1])
+
+    try:
+        # Establish the first secondary connection
+        await asyncio.create_task(handle_secondary_connection(new_port))
+        # Listen and handle the status message
+        await asyncio.create_task(handle_status_messages(reader))
+    except asyncio.CancelledError:
+        # If one of the coroutines is cancelled, close the writer and wait for it to be closed
+        writer.close()
+        await writer.wait_closed()
 
 
 async def main():
-    try:
-        reader, writer = await asyncio.open_connection(HOST, PORT)
-        await handle_primary_connection(reader, writer)
-    except (ConnectionRefusedError, socket.gaierror):
-        print("Failed to connect to server")
+    await handle_primary_connection()
+    print(f"The connected ports are: {SEC_PORTS}")
+    print(f"The listening ports are: {LISTEN_PORTS}")
+
 
 if __name__ == '__main__':
     asyncio.run(main())
