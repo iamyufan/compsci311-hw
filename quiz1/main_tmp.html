@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>main.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///Users/yufanzhang/Desktop/DKU/courses/4/COMPSCI311/assignments/R%3A%5C2.Travail%5C1.Enseignement%5CCours%5C_1.Outils%5C2.Developpement%5C1.SCSS%5Cmain.css" type="text/css"><link rel="stylesheet" href="file:///Users/yufanzhang/Desktop/DKU/courses/4/COMPSCI311/assignments/D%3A%5Crdaros%5CCours%5C_1.Outils%5C2.Developpement%5C1.SCSS%5Cmain.css" type="text/css">
+</head>
+
+<body>
+    <h1 id="compsci-311-quiz-1">CompSci 311 Quiz 1</h1>
+<h2 id="q1">Q1</h2>
+<p>You are the network communications engineer in a team that is developing an industrial solution that uses four drones. The drones need to work synchronously. To that end, each drone communicates data on its position, speed, and height to each of the other three drones in synchronization 64B messages that carry 64B. An acknowledgement frame contains 12B. To guarantee the best synchronization possible, drones send synchronization messages as soon as they receive the acknowledgement for their previous message. Assume that the drones work at a distance of 300 meters one from the other, that the speed of light is 3 × 10^8 m/s and that there are no collisions.</p>
+<p>What is the minimum needed bandwidth to ensure that drones can send the next synchronization message right after receiving the acknowledgement of the previous message? Explain your reasoning and calculations.</p>
+<h3 id="answer">Answer</h3>
+<ol>
+<li><strong>Calculate the propagation delay between drones.</strong></li>
+</ol>
+<p>Propagation delay = Distance / Speed of light = 300 meters / (3 × 10^8 m/s) = 10^(-6) seconds (1 microsecond)</p>
+<ol start="2">
+<li><strong>Calculate the time it takes to transmit the messages</strong></li>
+</ol>
+<p>Let R be the data rate in bits per second (bps).</p>
+<p>For the 64B synchronization message:</p>
+<ul>
+<li>Time to transmit = (64 bytes * 8 bits/byte) / R = 512 bits / R</li>
+</ul>
+<p>For the 12B acknowledgement message:</p>
+<ul>
+<li>Time to transmit = (12 bytes * 8 bits/byte) / R = 96 bits / R</li>
+</ul>
+<ol start="3">
+<li><strong>Calculate the minimum bandwidth needed</strong></li>
+</ol>
+<p>Total time for the message exchange = 2 * Propagation delay + Time to transmit sync message + Time to transmit acknowledgement</p>
+<p>Total time for the message exchange = 2 * 10^(-6) s + 512 bits / R + 96 bits / R</p>
+<p>The minimum R that satisfies the equation is given below:</p>
+<p>R = (512 bits + 96 bits) / (2 × 10 - (-6) s)</p>
+<p>R = 608 bits / (2 × 10 - (-6) s) = 304 Mbps</p>
+<p>i.e., the minimum bandwidth needed to ensure that drones can send the next synchromization message right after receiving the acknowledgement of the previous message is 304 Mbps.</p>
+<hr>
+<h2 id="q2">Q2</h2>
+<p>​​Consider a link with high latency and very high bandwidth that uses large sending and receiving windows. Discuss how you would handle transmission errors that require retransmission. Assume that the error detection code is flawless. Focus on aspects related to the coordination of the sending and receive windows: When and what does the sender retransmit? How does the sender decide what frames need retransmission? What feedback does the receiver send to the sender? What is the impact of a transmission error?</p>
+<h3 id="answer">Answer</h3>
+<p>The sender can use Automatic Repeat Request (ARQ), which includes Stop-and-Wait ARQ, Go-Back-N ARQ, and Selective Repeat ARQ, to handle transmission errors.</p>
+<ol>
+<li>When the sender retransmits:</li>
+</ol>
+<p>When the sender does not receive a positive acknowledgement (ACK) for a frame within a specified time window (timeout), it retransmits the frame.</p>
+<ol start="2">
+<li>How does the sender decide what frames need retransmission:</li>
+</ol>
+<p>The choice of retransmission protocol (Go-Back-N or Selective Repeat) determines which frames the sender retransmits.</p>
+<ul>
+<li>In Go-Back-N ARQ, the sender maintains a single copy of unacknowledged frames and resends all frames starting from the earliest unacknowledged frame when a timeout occurs.</li>
+<li>In Selective Repeat ARQ, the sender maintains individual timers for each unacknowledged frame and only retransmits the specific frame that triggered a timeout.</li>
+</ul>
+<ol start="3">
+<li>What feedback does the receiver send to the sender:</li>
+</ol>
+<p>The receiver sends feedback to the sender in the form of positive acknowledgements (ACKs). ACKs indicate that a frame was received correctly. For example, the receiver can send a negative acknowledgement (NACK) to the sender to indicate that a packet was not received and needs to be retransmitted.</p>
+<p>[ref:https://www.red5pro.com/blog/6-ways-webrtc-solves-ultra-low-latency-streaming/]</p>
+<ol start="4">
+<li>Impact of a transmission error:</li>
+</ol>
+<p>The impact of a transmission error can be that TCP runs out of buffer space and the transfer has to stop until the retransmitted lost packet has been received2.</p>
+<p>[ref:https://www.noction.com/blog/network-latency-packet-loss]</p>
+<hr>
+<h2 id="q3">Q3</h2>
+<p>Our NetMaze assignment assumes reliable message delivery, which significantly simplifies protocol design. Consider a simplified scenario where messages from the server to a client can be lost. In this case, the server might need to retransmit messages to the client. Describe how you would adapt the behavior of the server and client to account for lost messages. Assume that messages from clients to the server are always delivered. Assume that both the server and the client follow the protocol correctly: in other words, assume that there are no bugs and focus only on handling the lost messages. Hint: Clearly describe when the server sends retransmissions for lost messages.</p>
+<h3 id="answer">Answer</h3>
+<p>Use a retransmission mechanism:</p>
+<p><strong>Client behavior:</strong></p>
+<ol>
+<li>After the client receives a message from the server, it processes the message and sends an acknowledgement (ACK) back to the server, including the message's unique identifier.</li>
+</ol>
+<p><strong>Server behavior:</strong></p>
+<ol>
+<li>
+<p>The server stores a copy of each message it sends to a client in a buffer along with a timestamp indicating when the message was sent.</p>
+</li>
+<li>
+<p>The server starts a timer for each message it sends. If an ACK for a particular message is not received within a predetermined timeout period, the server retransmits the message to the client.</p>
+</li>
+<li>
+<p>When the server receives an ACK from the client for a particular message, it removes the corresponding message from its buffer and cancels the timer for that message.</p>
+</li>
+</ol>
+<hr>
+<h2 id="q4">Q4</h2>
+<p>Considering the exposed terminal problem in Wi-Fi networks:</p>
+<p>(a) Draw a diagram showing device placement and transmission (interference) range of each device.</p>
+<p>(b) Describe a sequence of events that leads to the exposed terminal problem in the context of the diagram in item (a) above.</p>
+<p>(c) Discuss the consequences of the exposed terminal problem.</p>
+<p>(d) Discuss whether RTS/CTS helps in dealing with the exposed terminal problem. Explain how RTS/CTS helps or why it cannot.</p>
+<h3 id="answer">Answer</h3>
+<p>(a)</p>
+<pre class="hljs"><code><div>A ----- R1 ----- B
+        |
+        C
+</div></code></pre>
+<p>There are four devices: A, B, R1, and C.</p>
+<p>Device A and B are within the transmission range of R1.<br>
+R1 is within the transmission range of A, B, and C.<br>
+Device C is within the transmission range of R1 but not A or B.</p>
+<p>(b)</p>
+<ul>
+<li>Device A wants to transmit data to R1. At the same time, R1 wants to transmit data to C.</li>
+<li>A senses the channel and finds it idle. It starts transmitting data to R1.</li>
+<li>R1 receives the transmission from A and starts transmitting to C.</li>
+<li>Device B also wants to transmit data to R1 but senses the channel busy due to A's ongoing transmission. Therefore, B defers its transmission, even though its transmission would not interfere with R1's transmission to C.</li>
+<li>B becomes an exposed terminal since it cannot transmit to R1, even though its transmission would not cause any interference at R1.</li>
+</ul>
+<p>(c)</p>
+<ul>
+<li>The exposed terminal problem causes devices to defer their transmissions unnecessarily, leading to decreased network throughput.</li>
+<li>Waiting for the channel to become idle adds delays to the data transmission, increasing latency.</li>
+</ul>
+<p>(d)</p>
+<ul>
+<li>When a device (e.g., A) wants to transmit data to another device (e.g., R1), it sends a short RTS packet.</li>
+<li>If the receiver (R1) is available to receive data, it sends a CTS packet back to the sender (A).</li>
+<li>All other devices in the network (e.g., B) that hear either the RTS or CTS packet will update their Network Allocation Vector (NAV) and defer their transmissions for the duration specified in the RTS/CTS packets.</li>
+</ul>
+<p>RTS/CTS can help alleviate the exposed terminal problem: When A sends an RTS to R1 and R1 responds with a CTS, B will overhear the CTS and update its NAV, deferring its transmission. However, C, which is not in the transmission range of A, will not hear the RTS from A. Therefore, when R1 sends its RTS to C, C will respond with a CTS, and R1 can transmit data to C without interference from A.</p>
+<p>[ref:https://www.tutorialspoint.com/the-exposed-terminal-problem]</p>
+
+</body>
+
+</html>
